@@ -6,10 +6,8 @@
 #   - `build:` Conventional Commits prefix so pr-title-lint accepts it.
 #
 # siafudb is a Rust workspace, so cargo + github-actions cover everything
-# it ships. The Mintlify docs site under docs/ has its own package.json
-# but its dependencies are unmanaged (pinned to whatever Mintlify CLI
-# version is current); add an `npm` entry under directory `/docs` if
-# that changes.
+# it ships. The docs site (nyuchi/docs) lives in its own repo and is not
+# covered here.
 
 version: 2
 updates:

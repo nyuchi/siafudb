@@ -1,17 +1,13 @@
 // markdownlint-cli2 configuration for siafudb.
 //
 // Style rules come from the org-mirrored .markdownlint.jsonc — do
-// not duplicate them here. This file only carries siafudb-specific
-// ignore patterns: research/governance .md drafts that use
-// bold-as-heading patterns (Section X / Extension X / Covenant X)
-// deliberate to those documents, and which trip MD036. They will
-// be rewritten and converted into curated .mdx pages over time;
-// .mdx files render through Mintlify and are never seen by
-// markdownlint, so the working .md drafts are the only files
-// affected by this exclusion.
+// not duplicate them here. The documentation site (including the
+// research/governance .md drafts that used to live under docs/ and
+// trip MD036) has moved to the separate nyuchi/docs repo, so this
+// file only ignores node_modules now.
 {
   "config": {
     "extends": ".markdownlint.jsonc",
   },
-  "ignores": ["docs/research/*.md", "docs/governance/*.md", "node_modules/**"],
+  "ignores": ["node_modules/**"],
 }
