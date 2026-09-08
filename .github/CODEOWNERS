@@ -10,6 +10,3 @@
 /Cargo.toml     @bryanfawcett
 /Cargo.lock     @bryanfawcett
 /.github/       @bryanfawcett
-
-# Docs site
-/docs/          @bryanfawcett
