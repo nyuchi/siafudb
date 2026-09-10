@@ -10,7 +10,7 @@ _but the ecosystem collapses without it._
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/nyuchi/siafudb.svg)](https://github.com/nyuchi/siafudb/stargazers)
 
-[Website](https://siafudb.org) · [Documentation](https://siafudb.org/docs) · [Getting Started](https://siafudb.org/docs/getting-started) · [Community](https://github.com/nyuchi/siafudb/discussions)
+[Website](https://siafudb.org) · [Documentation](https://siafudb.org) · [Getting Started](https://siafudb.org/guides/quickstart) · [Community](https://github.com/nyuchi/siafudb/discussions)
 
 </div>
 
@@ -165,7 +165,7 @@ cargo test
 wasm-pack build --target web siafudb-edge
 ```
 
-For detailed build instructions, see the [Developer Guide](https://siafudb.org/docs/developer-guide).
+For detailed build instructions, see [Contributing → Build from Source](CONTRIBUTING.md#2-build-from-source).
 
 ## Roadmap
 
@@ -175,7 +175,7 @@ For detailed build instructions, see the [Developer Guide](https://siafudb.org/d
 - [ ] Integrate Grafeo core as the embedded engine
 - [ ] Publish initial SiafuDB releases (Python, Node.js, Rust, Go)
 - [ ] Set up CI/CD pipeline
-- [ ] Launch siafudb.org documentation site
+- [x] Launch siafudb.org documentation site
 
 ### Phase 2 — Graph Sync Protocol
 
@@ -253,6 +253,6 @@ SiafuDB is not a product-specific tool. It is infrastructure for anyone building
 
 _The army ant carries the graph._
 
-**[Website](https://siafudb.org)** · **[Documentation](https://siafudb.org/docs)** · **[GitHub](https://github.com/nyuchi/siafudb)** · **[Community](https://github.com/nyuchi/siafudb/discussions)**
+**[Website](https://siafudb.org)** · **[Documentation](https://siafudb.org)** · **[GitHub](https://github.com/nyuchi/siafudb)** · **[Community](https://github.com/nyuchi/siafudb/discussions)**
 
 </div>
