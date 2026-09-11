@@ -7,10 +7,11 @@
 _Named after the African army ant (Dorylus) — small, embedded, unnoticed,_
 _but the ecosystem collapses without it._
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/nyuchi/siafudb.svg)](https://github.com/nyuchi/siafudb/stargazers)
+[![CI](https://github.com/siafuDB/siafudb/actions/workflows/ci-rust.yml/badge.svg)](https://github.com/siafuDB/siafudb/actions/workflows/ci-rust.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+![Rust](https://img.shields.io/badge/Rust-2024_edition-000000?logo=rust&logoColor=white)
 
-[Website](https://siafudb.org) · [Documentation](https://siafudb.org) · [Getting Started](https://siafudb.org/guides/quickstart) · [Community](https://github.com/nyuchi/siafudb/discussions)
+**Version:** 0.1.0 (pre-release, unpublished) | **Website:** [siafudb.org](https://siafudb.org) | **Docs:** [siafudb.org](https://siafudb.org) · [`siafuDB/docs`](https://github.com/siafuDB/docs) | **Licence:** Apache 2.0
 
 </div>
 
@@ -23,6 +24,15 @@ SiafuDB is an embedded, high-performance property graph database for environment
 The relational model was designed in 1970 for accounting ledgers. The human brain is a graph. AI systems reason over graphs. The world is connected through relationships, not rows. Server-side graph databases solve this for the cloud. SiafuDB solves it everywhere else.
 
 SiafuDB is built on [Grafeo](https://grafeo.dev), a pure-Rust embedded graph engine, extended with capabilities that no other embedded graph database offers: a graph sync protocol for subgraph replication, Web3-native pod storage, and optimised edge runtime deployment. SiafuDB is open-source infrastructure — free to use, extend, and deploy in any application, on any platform, for any purpose.
+
+> **Status: 0.1.0, pre-release.** This repository is a Cargo workspace of
+> five crates — `siafudb`, `siafudb-core`, `siafudb-sync`, `siafudb-access`
+> and `siafudb-server` — totalling roughly 4,000 lines of Rust against
+> `grafeo` 0.4. Nothing is published yet: there is no `siafudb` on
+> crates.io, npm or PyPI, and no Go module. Build from source. The
+> capabilities described below are split into what Grafeo provides today
+> and what SiafuDB is building; read the split carefully before depending
+> on it.
 
 ### What makes SiafuDB different?
 
@@ -51,7 +61,7 @@ SiafuDB is built on [Grafeo](https://grafeo.dev), a pure-Rust embedded graph eng
 - Embedded and server modes — same engine, different deployment
 - LPG and RDF dual data model support
 
-**SiafuDB extensions (in development):**
+**SiafuDB extensions (in development — see the roadmap for status):**
 
 - **Graph Sync Protocol** — CRDT-inspired bidirectional subgraph replication between SiafuDB instances and server-side graph databases
 - **Web3 pod storage** — embedded graph store for decentralised personal data pods with cryptographic identity binding
@@ -60,53 +70,41 @@ SiafuDB is built on [Grafeo](https://grafeo.dev), a pure-Rust embedded graph eng
 
 ## Quick Start
 
-### Python
+SiafuDB is not published to any registry yet. Depend on it by path or by git:
 
-```bash
-pip install siafudb
+```toml
+[dependencies]
+siafudb = { git = "https://github.com/siafuDB/siafudb" }
 ```
 
-```python
-import siafudb
+```rust
+use siafudb_core::SiafuDB;
 
-db = siafudb.Database('./my_graph.db')
+fn main() -> Result<(), siafudb_core::SiafuError> {
+    // Open or create a database — the same shape as opening a SQLite file.
+    let db = SiafuDB::open("my_app.siafu")?;
 
-# Create nodes
-db.execute("INSERT (:Person {name: 'Tatenda', age: 28})")
-db.execute("INSERT (:Person {name: 'Rumbi', age: 25})")
+    // Execute graph queries with Cypher.
+    db.execute("CREATE (:Person {name: 'Amara', city: 'Accra'})")?;
 
-# Create a relationship
-db.execute("""
-    MATCH (a:Person {name: 'Tatenda'}), (b:Person {name: 'Rumbi'})
-    INSERT (a)-[:KNOWS {since: 2020}]->(b)
-""")
-
-# Query the graph
-result = db.execute("""
-    MATCH (a:Person)-[:KNOWS]->(b:Person)
-    RETURN a.name, b.name
-""")
-for row in result:
-    print(row)
+    Ok(())
+}
 ```
 
-### Rust
+Python, Node.js and Go bindings are planned, not built. When they ship they
+will be listed here with the registry name; until then, `pip install
+siafudb`, `npm install siafudb` and `cargo add siafudb` all fail, because
+nothing has been published under those names.
 
-```bash
-cargo add siafudb
-```
+### Workspace layout
 
-### Node.js
-
-```bash
-npm install siafudb
-```
-
-### Go
-
-```bash
-go get github.com/nyuchi/siafudb-go
-```
+| Crate            | What it is                                                                        |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `siafudb`        | The unified crate — re-exports everything. What users depend on.                  |
+| `siafudb-core`   | The engine. Wraps Grafeo with fragments, cryptographic identity, changelog        |
+| `siafudb-sync`   | The Graph Sync Protocol — mutations, conflict resolution, GSPA/GSPI/GSPN adapters |
+| `siafudb-access` | Document (JSON), KV and time-series access patterns over the graph                |
+| `siafudb-server` | Optional standalone server for development and testing                            |
 
 ## Use Cases
 
@@ -140,15 +138,17 @@ The **Graph Sync Protocol** connects SiafuDB instances to each other and to serv
 
 ### Prerequisites
 
-- Rust 1.75+ (with cargo)
-- CMake 3.15+ (for native bindings)
-- Python 3.9+ (for Python bindings)
-- wasm-pack (for WASM builds)
+- Rust with cargo, on a toolchain that supports **edition 2024**
+- wasm-pack, for WASM builds (not yet wired up)
+
+CMake and Python are listed in older drafts of this file; neither is needed
+to build the workspace as it stands, because there are no native or Python
+bindings in the tree yet.
 
 ### Build
 
 ```bash
-git clone https://github.com/nyuchi/siafudb.git
+git clone https://github.com/siafuDB/siafudb.git
 cd siafudb
 cargo build --release
 ```
@@ -159,21 +159,16 @@ cargo build --release
 cargo test
 ```
 
-### Build WASM
-
-```bash
-wasm-pack build --target web siafudb-edge
-```
-
-For detailed build instructions, see [Contributing → Build from Source](CONTRIBUTING.md#2-build-from-source).
+For detailed build instructions, see
+[CONTRIBUTING.md](https://github.com/siafuDB/siafudb/blob/main/CONTRIBUTING.md).
 
 ## Roadmap
 
 ### Phase 1 — Foundation (Current)
 
 - [x] Establish SiafuDB project under Apache 2.0
-- [ ] Integrate Grafeo core as the embedded engine
-- [ ] Publish initial SiafuDB releases (Python, Node.js, Rust, Go)
+- [x] Stand up the five-crate Cargo workspace against Grafeo 0.4
+- [ ] Publish initial SiafuDB releases (Rust first, then Python, Node.js, Go)
 - [ ] Set up CI/CD pipeline
 - [x] Launch siafudb.org documentation site
 
@@ -237,13 +232,25 @@ SiafuDB is built on the Ubuntu philosophy — _I am because we are_. We are comm
 
 SiafuDB is licensed under the [Apache License, Version 2.0](LICENSE).
 
-**The Apache 2.0 licence will never change.** SiafuDB is governed by the **The Bundu Foundation** (Zimbabwean Company Limited by Guarantee) — a legal entity with no shareholders that exists for the community. The Foundation's charter structurally prevents relicensing. This is not a promise. It is a legal guarantee.
+**The Apache 2.0 licence will never change.** SiafuDB is governed by the
+**Bundu Foundation** (Zimbabwean Company Limited by Guarantee) — a legal
+entity with no shareholders that exists for the community. The Foundation's
+charter structurally prevents relicensing. This is not a promise. It is a
+legal guarantee.
+
+© Bundu Foundation, operated by Nyuchi Africa (Pvt) Ltd.
 
 ## About
 
-SiafuDB is open-source infrastructure maintained by [Nyuchi Africa](https://nyuchi.com) and governed by the **The Bundu Foundation**.
+SiafuDB is open-source infrastructure governed by the **Bundu Foundation**
+and operated by [Nyuchi](https://nyuchi.com).
 
-It is part of the broader open infrastructure ecosystem built by Nyuchi Africa, alongside the [Nyuchi Honeycomb](https://nyuchi.com/honeycomb) decentralised compute and storage network and the [Nyuchi API Platform](https://nyuchi.com/api). Each is independently governed — Nyuchi Africa manages the Honeycomb network and enterprise infrastructure, the Bundu Foundation governs SiafuDB and the Mukoko token ecosystem, and [Mukoko](https://mukoko.com) operates independently as a product built on this infrastructure.
+Sibling Foundation projects include [NTL](https://openntl.org), the Neural
+Transfer Layer, and [Mzizi](https://mzizi.dev), the open architecture and
+design system. [Mukoko](https://mukoko.com) operates independently as a
+product built on this infrastructure. Nyuchi Honeycomb — a decentralised
+compute and storage network — appears in Foundation ecosystem copy but has
+no public repository or address yet, so it is not linked here.
 
 SiafuDB is not a product-specific tool. It is infrastructure for anyone building applications that need graph-native intelligence on device, at the edge, or in decentralised networks. Build what you need. The graph is yours.
 
@@ -253,6 +260,6 @@ SiafuDB is not a product-specific tool. It is infrastructure for anyone building
 
 _The army ant carries the graph._
 
-**[Website](https://siafudb.org)** · **[Documentation](https://siafudb.org)** · **[GitHub](https://github.com/nyuchi/siafudb)** · **[Community](https://github.com/nyuchi/siafudb/discussions)**
+**[Website](https://siafudb.org)** · **[Documentation](https://siafudb.org)** · **[GitHub](https://github.com/siafuDB/siafudb)** · **[Docs repo](https://github.com/siafuDB/docs)**
 
 </div>
